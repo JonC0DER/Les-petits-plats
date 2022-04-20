@@ -15,15 +15,62 @@
     background-color: var(--blue-flat);
 }
 
+.hide-elem{
+    display: none;
+}
+
+ul.ingredients span, ul.appliance span, ul.ustensils span{
+    margin:3px 5px 3px 5px;
+    width:28%;
+    height: 20px;
+}
+ul.ingredients span.animtrans,
+ul.appliance span.animtrans, 
+ul.ustensils span.animtrans{
+    animation: translateContent 0.2s ease 0 1;
+}
+ul.ingredients span.reversetrans,
+ul.appliance span.reversetrans, 
+ul.ustensils span.reversetrans{
+    animation: translateContent 0.2s ease 0 1 reverse;
+}
+
+ul.list_options.deploy-content{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+ul.list_options{
+    position:absolute;
+    z-index:1 ;
+    width: 550px;
+    top: 100%;
+    left: 0;
+    padding: 20px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
 .list_nav{
     position: relative;
-    padding:10px 10px 8px 10px;
-    width:fit-content;
-    border-radius: 5%;
+    padding:15px 15px 13px 15px;
+    width:140px;
+    border-radius: 5px;
     color:white;
     display: flex;
     margin-right: 20px;
+    cursor: pointer;
 }
+
+.list_nav.deploy_radius{
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+.list_nav.deploy{
+    width: 550px;
+}
+
 .list_nav::after{
     content: '';
     width: 10px;
@@ -35,7 +82,33 @@
     right: 12px;
     transform: rotate(-135deg);
 }
+.colorbtn-anim-open{
+    animation: coloredBtnAnim 0.4s ease-in 0s;
+}
+.colorbtn-anim-close{
+    animation: coloredBtnAnim 0.4s ease-in 0s reverse;
+}
 
+@keyframes coloredBtnAnim {
+    0%{
+        width: 140px;
+    }
+    100%{
+        width: 600px;
+    }
+}
+@keyframes translateContent {
+    0%{
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    100%{
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+/*-------------------------- HEADER + GALLERIE */
 header > nav {
     display:flex;
     margin-top: 30px;
@@ -46,6 +119,8 @@ main.gallerie_recipies{
     justify-content: space-between;
     flex-wrap: wrap;
 }
+
+ /* --------------------------- DESIGN RECIPES CARDS */
 .recipe_card{
     width: 29%;
     height:400px;
@@ -54,10 +129,12 @@ main.gallerie_recipies{
 
 .recipe_card figure{
     margin:0;
-    height:50%;
+    height:200px;
 }
 .recipe_card figure img{
     object-fit: cover;
+    width: 100%;
+    height: 100%;
 }
 
 .recipe_card .recipe{
@@ -88,4 +165,25 @@ main.gallerie_recipies{
 .recipe_card .recipe .time_description{
     width: 40%;
     overflow: hidden;
+}
+
+/* ---------------------------- PAGINATION */
+.control_pagination :nth-child(1),
+.control_pagination :nth-child(2),
+.control_pagination :nth-child(4),
+.control_pagination :nth-child(5){
+    cursor: pointer;
+    font-size: 21px;
+    font-weight: bold;
+    color: var(--blue-flat);
+    transform: scale(1);
+    transition: all 0.2s ease-in-out;
+}
+
+.control_pagination :nth-child(1):hover,
+.control_pagination :nth-child(2):hover,
+.control_pagination :nth-child(4):hover,
+.control_pagination :nth-child(5):hover{
+    transform: scale(1.2);
+    color: var(--green-flat);
 }
