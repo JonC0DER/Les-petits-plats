@@ -20,7 +20,7 @@
                 <h1 class="text-danger">Les petits plats</h1>
             </div>
             <form action="" class="input-group lg-3">
-                <input type="search" class="bg-light form-control" placeholder="Rechercher une recette">
+                <input type="search" class="bg-light form-control search_recipes" placeholder="Rechercher une recette">
                 <div class="search bg-light input-group-append" type="submit">
                     <i class="fas fa-search input-group-text"></i>
                 </div>
@@ -28,57 +28,35 @@
             <nav>
                 <div class="list_nav blue-flat">
                     <span>Ingrédients</span>
-                    <ul class="list_options"></ul>
+                    <ul class="ingredients list_options blue-flat hide-elem"></ul>
                 </div>
                 <div class="list_nav green-flat">
                     <span>Appareils</span>
-                    <ul class="list_options"></ul>
+                    <ul class="appliance list_options green-flat hide-elem"></ul>
                 </div>
                 <div class="list_nav orange-flat">
                     <span>Ustensiles</span>
-                    <ul class="list_options"></ul>
+                    <ul class="ustensils list_options orange-flat hide-elem"></ul>
                 </div>
             </nav>
         </header>
-        <main class="gallerie_recipies">
-            <!--
-            <article class="recipe_card card">
-                <figure>
-                    <img class="card-img-top" 
-                    src="https://www.muchosol.fr/escapes/wp-content/uploads/sites/7/2017/08/recettes-saines-pour-toute-la-famille.jpg" alt="">
-                </figure>
-                <div class="recipe card-body">
-                    <div class="name_ingredients">
-                        <h4 class="name card-title">Limonade de Coco</h4>
-                        <p class="ingredients card-text">
-                            <strong>Lait de coco:</strong> 399ml<br>
-                            <strong>Jus de citron:</strong> 1<br>
-                            <strong>Créme de coco:</strong> 3 cuillères<br>
-                            <strong>Sucre:</strong> 19g<br>
-                            <strong>Glaçons:</strong> 1
-                        </p>
-                    </div>
-                    <div class="time_description">
-                        <h4 class="time">
-                            <i class="far fa-clock"></i>
-                            10 min
-                        </h4>
-                        <p class="description card-text">
-                            Mettre les glaçons à votre goût dans 
-                            le blender, ajouter le lait, 
-                            la crème de coco, le jus de 2 citrons et
-                            le sucre. 
-                            Mixer jusqu'à avoir la consistence désirée
-                        </p>
-                    </div>
-                </div>
-            </article> 
-        -->           
-        </main>
+        <main class="gallerie_recipies" onload=""></main>
+        <div class="control_pagination">
+            <span onclick="firstPageRecipes()"> << </span>
+            <span onclick="previousPage()"> < </span>
+            <span class="page_info"></span>
+            <span onclick="nextPage()"> > </span>
+            <span onclick="lastPageRecipes()"> >> </span>
+        </div>
         <footer></footer>
     </div>
-    <script src="scripts/factories/recipesCardFactory.js"></script>
+    <script>
+        //initRecipes();
+    </script>
     <script src="scripts/data/fetchData.js"></script>
+    <script src="scripts/factories/recipesCardFactory.js"></script>
+    <script src="scripts/factories/pagination.js"></script>
+    <script src="scripts/utils/coloredBtn.js"></script>
     <script src="scripts/index.js"></script>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
