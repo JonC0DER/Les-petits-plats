@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function(){
     console.log('second')
 })
 
-let pagination = new Pagination(arrayRecipies);    
+const pagination = new Pagination(arrayRecipies);    
 function update() {    
     pagination.displayRecipies();
     content.innerHTML = pagination.pageContent;
@@ -63,49 +63,6 @@ function lastPageRecipes() {
    update() 
 }
 
-function searchRecipes(sentence){
-    const newArrayRecipes = new Array();
-    arrayRecipies.forEach(recipes =>{
-        const title = recipes.childNodes[1].childNodes[0]
-            .childNodes[0].textContent;
-        const ingredients = recipes.childNodes[1].childNodes[0]
-            .childNodes[1].textContent;
-        const desc = recipes.childNodes[1].childNodes[0]
-            .childNodes[1].textContent;
-        if(title.toLowerCase().search(sentence.toLowerCase()) > 0){
-            newArrayRecipes.push(recipes);
-        }
-        if(ingredients.toLowerCase().search(sentence.toLowerCase()) > 0){
-            newArrayRecipes.push(recipes);
-        }
-        if(desc.toLowerCase().search(sentence.toLowerCase()) > 0){
-            newArrayRecipes.push(recipes);
-        }
-    })
-    let uniqArrayRecipes = [];
-    if (newArrayRecipes.length <= 0) {
-        uniqArrayRecipes = arrayRecipies;
-    }else{
-        uniqArrayRecipes = [... new Set(newArrayRecipes)];
-        console.log(uniqArrayRecipes);
-        pagination.newArray(uniqArrayRecipes);
-        update();
-        const btns = coloredBtn();
-        btns.setValuesInArray()
-    }
-}
-
-const search_input = document.querySelector('input.search_recipes');
-search_input.addEventListener('input', function (evt) {
-    if (this.value.length >= 3) {   
-        searchRecipes(this.value);
-    }
-});
-
-const search_btn = document.querySelector('div.search');
-search_btn.addEventListener('click', function(){
-    searchRecipes(search_input.value);
-})
 
 const btnsColoed = document.querySelectorAll('div.list_nav');
 const spanTime = 200;
