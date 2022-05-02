@@ -18,42 +18,90 @@
 .hide-elem{
     display: none;
 }
+/* -------------------------------- TAGS */
+div.tags{
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding: 0;
+    height: 50px;
+}
 
-ul.ingredients span, ul.appliance span, ul.ustensils span{
+div.tags .old-search,
+div.tags .old-search,
+div.tags .old-search{
+    margin-right: 4px;
+}
+
+div.tags .tag_ingredient,
+div.tags .tag_appliance,
+div.tags .tag_ustensil{
+    margin-right: 8px;
+    margin-top: 8px;
+    border-radius: 5px;
+    width: fit-content;
+    padding: 8px;
+    color: white;
+}
+div.tags .tag_ingredient{
+    background-color: var(--blue-flat);
+}
+div.tags .tag_appliance{
+    background-color: var(--green-flat);
+}
+div.tags .tag_ustensil{
+    background-color: var(--orange-flat);
+}
+/*-------------------------- DIV list-float */
+div.list-float{
+    position:absolute;
+    z-index:3 ;
+    top: 100%;
+    left: 0;
+    padding: 20px;
+    width: 550px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+div.list-float span.close-btn{
+    margin-top: 20px;
+    opacity: 0.5;
+    float: right;
+}
+/*-------------------------- ULs */
+ul.ingredient span, ul.appliance span, ul.ustensil span{
     margin:3px 5px 3px 5px;
     width:28%;
     height: 20px;
+    line-height: initial;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-ul.ingredients span.animtrans,
+ul.ingredient span.animtrans,
 ul.appliance span.animtrans, 
-ul.ustensils span.animtrans{
-    animation: translateContent 0.2s ease 0 1;
+ul.ustensil span.animtrans{
+    animation: translateContent 0.2s ease 0 ;
 }
-ul.ingredients span.reversetrans,
+ul.ingredient span.reversetrans,
 ul.appliance span.reversetrans, 
-ul.ustensils span.reversetrans{
-    animation: translateContent 0.2s ease 0 1 reverse;
+ul.ustensil span.reversetrans{
+    animation: translateContent 0.2s ease 0 reverse;
 }
 
 ul.list_options.deploy-content{
+    max-height: 600px;
+    overflow-y: scroll;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
 }
 
-ul.list_options{
-    position:absolute;
-    z-index:1 ;
-    width: 550px;
-    top: 100%;
-    left: 0;
-    padding: 20px;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
 .list_nav{
     position: relative;
+    z-index: 1;
     padding:15px 15px 13px 15px;
     width:140px;
     border-radius: 5px;
@@ -63,7 +111,7 @@ ul.list_options{
     cursor: pointer;
 }
 
-.list_nav.deploy_radius{
+.deploy_radius{
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
 }
@@ -82,6 +130,18 @@ ul.list_options{
     right: 12px;
     transform: rotate(-135deg);
 }
+
+.list_nav form input{
+    border:none;
+    background: transparent;
+    color:white;
+}
+
+.list_nav form input:focus{
+    border:none;
+    border-bottom: 1px solid white;
+}
+
 .colorbtn-anim-open{
     animation: coloredBtnAnim 0.4s ease-in 0s;
 }
