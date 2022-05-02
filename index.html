@@ -19,31 +19,53 @@
                 <i class="fas fa-hat-chef"></i>
                 <h1 class="text-danger">Les petits plats</h1>
             </div>
-            <form action="" class="input-group lg-3">
+            <form class="input-group lg-3">
                 <input type="search" class="bg-light form-control search_recipes" placeholder="Rechercher une recette">
-                <div class="search bg-light input-group-append" type="submit">
+                <div class="search bg-light input-group-append">
                     <i class="fas fa-search input-group-text"></i>
                 </div>
             </form>
+            <div class="container tags"> </div>
             <nav>
                 <div class="list_nav blue-flat">
                     <span>Ingrédients</span>
-                    <ul class="ingredients list_options blue-flat hide-elem"></ul>
+                    <form class="hide-elem">
+                        <input class="ingredient" type="search" 
+                        placeholder="Rechercher un ingrédient">
+                    </form>
+                    <div class="list-float blue-flat hide-elem">
+                        <ul class="ingredient list_options"></ul>
+                        <span class="close-btn">Close</span>
+                    </div>
                 </div>
                 <div class="list_nav green-flat">
                     <span>Appareils</span>
-                    <ul class="appliance list_options green-flat hide-elem"></ul>
+                    <form class="hide-elem">
+                        <input class="appliance" type="search" 
+                        placeholder="Rechercher un appareil">
+                    </form>
+                    <div class="list-float green-flat hide-elem">
+                        <ul class="appliance list_options"></ul>
+                        <span class="close-btn">Close</span>
+                    </div>
                 </div>
                 <div class="list_nav orange-flat">
                     <span>Ustensiles</span>
-                    <ul class="ustensils list_options orange-flat hide-elem"></ul>
+                    <form class="hide-elem">
+                        <input class="ustensil" type="search" 
+                        placeholder="Rechercher un ustensil">
+                    </form>
+                    <div class="list-float orange-flat hide-elem">
+                        <ul class="ustensil list_options"></ul>
+                        <span class="close-btn">Close</span>
+                    </div>
                 </div>
             </nav>
         </header>
         <main class="gallerie_recipies" onload=""></main>
         <div class="control_pagination">
-            <span onclick="firstPageRecipes()"> << </span>
-            <span onclick="previousPage()"> < </span>
+            <span onclick="firstPageRecipes()"> &lt;&lt; </span>
+            <span onclick="previousPage()"> &lt; </span>
             <span class="page_info"></span>
             <span onclick="nextPage()"> > </span>
             <span onclick="lastPageRecipes()"> >> </span>
@@ -55,8 +77,10 @@
     </script>
     <script src="scripts/data/fetchData.js"></script>
     <script src="scripts/factories/recipesCardFactory.js"></script>
-    <script src="scripts/factories/pagination.js"></script>
+    <script src="scripts/factories/paginationFactory.js"></script>
+    <script src="scripts/factories/tagsFactory.js"></script>
     <script src="scripts/utils/coloredBtn.js"></script>
+    <script src="scripts/utils/colorBtnOpenClose.js"></script>
     <script src="scripts/utils/search.js"></script>
     <script src="scripts/index.js"></script>
     <!-- Optional JavaScript -->
