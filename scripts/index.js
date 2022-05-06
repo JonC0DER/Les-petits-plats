@@ -1,6 +1,7 @@
 const content = document.querySelector('main.gallerie_recipies');
 const infoPage = document.querySelector('.page_info');
 const arrayRecipies = new Array();
+const btns = coloredBtn();
 let recipiesDatas;
 
 function sleep(ms) {
@@ -21,12 +22,18 @@ function getRecipes() {
 }
 
 function initRecipes(recipiesDatas) {
-    recipiesDatas.forEach(async (recipie) => {
+    const setRecipiesArray = async (recipie) => {
         const card = new RecipiesCardFactory(recipie);
         if (card !== null) {    
             arrayRecipies.push(card.buildCard);
         }
-    });
+    }
+    
+    const recipiesDatasLen = recipiesDatas.length;
+    for (let i = 0; i < recipiesDatasLen; i++) {
+        const recipe = recipiesDatas[i];
+        setRecipiesArray(recipe);
+    }
     
     return arrayRecipies.length <= 0 ? false : true;
 }

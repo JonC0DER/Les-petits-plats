@@ -16,27 +16,29 @@ function searchRecipes(){
         let end = recipiesDatas.length -1;
 
         function begin(arrayToDivide, start, end, sentence){
-            let midIndex = Math.floor(arrayToDivide.length/2);
-
-            let wordsArrayToDivide = arrayToDivide[midIndex][key].split(' ');
-            let wordsArrayToDivideLength = wordsArrayToDivide.length;
-
-            for(let index = 0; index < wordsArrayToDivideLength; index ++) {
-                const word = wordsArrayToDivide[index];
+            const midIndex = Math.floor(arrayToDivide.length/2);
+            const wordsToDivide = arrayToDivide[midIndex][key].toLowerCase();
+            const wordsArrayToDivide = wordsToDivide.split(' ');
+            const ifInclude = wordsArrayToDivide.includes(sentence);
+            
+            let index = 0;
+            do{
                 const currentWordBoolean = sentence.localeCompare(
-                    word, 'fr',
-                    {sensitivity:'base', ignorePonctuation:true}
-                )
-
-                if (currentWordBoolean === 0) { return true; }
+                    wordsArrayToDivide[index], 'fr', {sensitivity:'base', ignorePonctuation:true}
+                );
+                
+                if (currentWordBoolean === 0 || ifInclude) { return true; }
                 
                 if (currentWordBoolean < 0) { 
                     return begin(arrayToDivide, start, midIndex - 1, sentence);
                 }else{ 
                     return begin(arrayToDivide, midIndex + 1, end, sentence); 
                 }
-            }
+                
+                index ++;
+            }while (index <= wordsArrayToDivide.length);
         }
+        
         begin(recipiesDatas, start, end, sentence);
     }
 
@@ -60,61 +62,74 @@ function searchRecipes(){
     }
     
     function searchIn(strArray, recipe, lowSent) {
-        let count = 0;
-        //console.log('strArray '+ strArray)
-        strArray.forEach(str => {
-            //console.log('str '+ str)
-            lowSent.split(' ').forEach(word => {
-                if (str.split(' ').includes(word)) {
-                    count ++;
-                }
-                if (count === lowSent.split(' ').length) {
-                    newArrayRecipes.push(recipe);
-                    count = 0;
-                }
-            })
-        })
-    }
+        
+        console.log(`${strArray}, ${lowSent}`)
+        const strALen = strArray.length;
+        const lowSentArray = lowSent.split(' ');
+        const lowSentALen = lowSentArray.length;
+        let count = 0 ;
 
-    function isInclude(strArray, recipe, lowSent) {
-        strArray.forEach(str => {
-            const array = str.split(' ');
-            if (array.includes(lowSent)) {
+        for (let i = 0; i < strALen; i++) {
+            const str = strArray[i].split(' ');
+            
+            if(strArray[i].match(lowSent)) {
                 newArrayRecipes.push(recipe);
             }
-        })        
+            
+            if (str.includes(lowSent)) {
+                newArrayRecipes.push(recipe);
+            }
+
+            for (let z = 0; z < lowSentALen; z++) {
+                const word = lowSentArray[z];
+                if (str.includes(word)){
+                    ++ count;
+                }
+            }
+                
+            if (count === lowSentALen) {
+                newArrayRecipes.push(recipe);
+                count = 0;
+            }
+        }
     }
 
     function launchSearch(type = null, lowSent) {
-        //console.log('type => '+ type) 
-        arrayRecipies.forEach(recipes =>{
+        let i = 0;
+        const recepiesLen = arrayRecipies.length;
+        
+        for (; i < recepiesLen; i++) {
+            const recipes = arrayRecipies[i];
+            
             const title = recipes.childNodes[1].childNodes[0]
             .childNodes[0].textContent.toLowerCase();
             const ingredients = recipes.childNodes[1].childNodes[0]
-                .childNodes[1].textContent.toLowerCase();
+            .childNodes[1].childNodes[0].textContent.toLowerCase();
             const desc = recipes.childNodes[1].childNodes[1]
-                .childNodes[1].textContent.toLowerCase();
+            .childNodes[1].textContent.toLowerCase();
             const appliance = recipes.childNodes[2].childNodes[0]
-                .textContent.toLowerCase();
+            .textContent.toLowerCase();
             const ustensil = recipes.childNodes[2].childNodes[1].childNodes;
+            const ustensilALen = ustensil.length;
             
             const strArray = new Array();
             if(type === 'ingredient'){
-                strArray.push(ingredients);
+                console.log('ing '+ingredients)
+                searchIn(['', ingredients], recipes, lowSent);
             } else if(type === 'appliance'){
-                strArray.push(appliance);
+                searchIn(['', appliance], recipes, lowSent);
             } else if(type === 'ustensil'){
-                ustensil.forEach(span => {
+                let z = 0;
+                for (; z < ustensilALen; z++) {
+                    const span = ustensil[z];
                     strArray.push(span.textContent);
-                })
+                }
+                searchIn(strArray, recipes, lowSent);    
             }else{
                 strArray.push(title, ingredients, desc);
+                searchIn(strArray, recipes, lowSent);
             }
-            
-            searchIn(strArray, recipes, lowSent);
-            isInclude(strArray, recipes, lowSent);
-        })
-
+        }
         initUpdate();
     }
 
@@ -139,10 +154,11 @@ search_btn.addEventListener('click', function(){
 });
 
 const tags = document.querySelector('div.tags');
-
-const btns = coloredBtn();
 const specificInput = document.querySelectorAll('.list_nav input[type=search]');
-specificInput.forEach(input => {
+const specInputLen = specificInput.length;
+
+for(let i = 0; i < specInputLen; ++i){
+    const input = specificInput[i];
     input.addEventListener('input', () => {
         if (input.value.length > 2) {
             btns.searchInBtns(input.value, input.className);
@@ -151,4 +167,4 @@ specificInput.forEach(input => {
             btns.setValuesInArray(arrayRecipies);
         }
     })
-});
+}
