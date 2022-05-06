@@ -18,6 +18,24 @@
 .hide-elem{
     display: none;
 }
+
+header{
+    margin-top: 20px;
+}
+/*-------------------------------- LOGO */
+div.logo-container{
+    display: flex;
+    flex-direction: column;
+}
+img.logo{
+    width:50px;
+    height:46px;
+    align-self: center;
+}
+h1.logo-text{
+    text-align: center;
+    color:#D04F4F;
+}
 /* -------------------------------- TAGS */
 div.tags{
     display: flex;
