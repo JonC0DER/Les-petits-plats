@@ -4,6 +4,11 @@ function searchRecipes(){
     function displayArray() {
         return ([... new Set(newArrayRecipes)]);
     }
+    
+    function getPreciseArray() {
+        preciseArrayRecipies = newArrayRecipes.slice();
+        return ([... new Set(preciseArrayRecipies)]);
+    }
 
     function resetArray() {
         if(newArrayRecipes.length > 0){
@@ -13,7 +18,7 @@ function searchRecipes(){
 
     function divideAndConquer(key, sentence) {
         let start = 0;
-        let end = recipiesDatas.length -1;
+        let end = dict.length -1;
 
         function begin(arrayToDivide, start, end, sentence){
             const midIndex = Math.floor(arrayToDivide.length/2);
@@ -21,39 +26,83 @@ function searchRecipes(){
             const wordsArrayToDivide = wordsToDivide.split(' ');
             const ifInclude = wordsArrayToDivide.includes(sentence);
             
-            let index = 0;
-            do{
-                const currentWordBoolean = sentence.localeCompare(
-                    wordsArrayToDivide[index], 'fr', {sensitivity:'base', ignorePonctuation:true}
-                );
-                
-                if (currentWordBoolean === 0 || ifInclude) { return true; }
-                
-                if (currentWordBoolean < 0) { 
-                    return begin(arrayToDivide, start, midIndex - 1, sentence);
-                }else{ 
-                    return begin(arrayToDivide, midIndex + 1, end, sentence); 
-                }
-                
-                index ++;
-            }while (index <= wordsArrayToDivide.length);
+            const currentWordBoolean = sentence.localeCompare(
+                wordsArrayToDivide[index], 'fr', {sensitivity:'base', ignorePonctuation:true}
+            );
+            
+            if (currentWordBoolean === 0 || ifInclude) { return true; }
+            
+            if (currentWordBoolean < 0) { 
+                return begin(arrayToDivide, start, midIndex - 1, sentence);
+            }else{ 
+                return begin(arrayToDivide, midIndex + 1, end, sentence); 
+            }
         }
         
         begin(recipiesDatas, start, end, sentence);
     }
 
-    function searchSentence(sentence, type = null) {
-        resetArray();
-        const lowSent = sentence.toLowerCase();
-        launchSearch(type, lowSent);
+    function removeSentence(sentence, type) {
+        const restructuringArray = getPreciseArray();
+        const rALength = restructuringArray.length;
+        let i = 0; let elem;
+        for (; i < rALength; ++ i) {
+            const recipes = restructuringArray[i];
+            if (type === 'ingredient') {
+                elem = recipes.childNodes[1].childNodes[0].childNodes[1].childNodes[0].textContent.toLowerCase();
+            }
+            if (type === 'appliance') {
+                elem = recipes.childNodes[2].childNodes[0].textContent.toLowerCase();
+            }
+            if (type === 'ustensil') {
+                elem = recipes.childNodes[2].childNodes[1].childNodes;
+            }
+
+            if (elem instanceof Array) {
+                const elemLen = elem.length;
+                for(let z = 0; z < elemLen; z ++) {
+                    if (elem[z].toLowerCase() === sentence.toLowerCase()) {
+                        restructuringArray.splice(restructuringArray.indexOf(recipes, 1));
+                    }
+                }
+            }else{
+                const elemLow = elem.toLowerCase();
+                const sentenceLow = sentence.toLowerCase();
+                const words = sentenceLow.split(' ');
+                const elems = elemLow.split(' ');
+
+                if (elemLow === sentenceLow) {
+                    restructuringArray.splice(restructuringArray.indexOf(recipes, 1));
+                }
+
+                const wordsLen = words.length;
+                for (let x = 0; x < wordsLen ; x++) {
+                    const word = words[x];
+                    if (elems.includes(word)) {
+                        restructuringArray.splice(restructuringArray.indexOf(recipes, 1));
+                    }
+                }
+            }
+        }
+        initUpdate(true);
     }
 
-    function initUpdate() {
+    function searchSentence(sentence, type = null, precise = false) {
+        resetArray();
+        const lowSent = sentence.trim().toLowerCase();
+        launchSearch(lowSent, type, precise);
+    }
+
+    function initUpdate(precise = false) {
         let uniqArrayRecipes = [];
         if (newArrayRecipes.length <= 0) {
             uniqArrayRecipes = arrayRecipies;
         }else{
-            uniqArrayRecipes = displayArray();
+            if(precise && getPreciseArray().length >= 1){
+                uniqArrayRecipes = getPreciseArray();
+            }else{ 
+                uniqArrayRecipes = displayArray();
+            }
             pagination.newArray(uniqArrayRecipes);
             const btns = coloredBtn();
             btns.setValuesInArray();
@@ -62,31 +111,47 @@ function searchRecipes(){
     }
     
     function searchIn(strArray, recipe, lowSent) {
-        
-        console.log(`${strArray}, ${lowSent}`)
         const strALen = strArray.length;
         const lowSentArray = lowSent.split(' ');
         const lowSentALen = lowSentArray.length;
-        let count = 0 ;
 
         for (let i = 0; i < strALen; i++) {
-            const str = strArray[i].split(' ');
-            
-            if(strArray[i].match(lowSent)) {
-                newArrayRecipes.push(recipe);
+            if (/*Array.isArray(strArray[i]) ||*/ strArray[i] == '[object NodeList]') {
+                strArray[i].forEach(ing => {
+                    searchEngage(ing.textContent);
+                });
+            }else{
+                searchEngage(strArray[i]);
             }
+        }
+
+        function searchEngage(textInput) {
+            const text = textInput.toLowerCase();
+            const str = text.split(' ');
+            let count = 0;
             
-            if (str.includes(lowSent)) {
+            if(text.search(lowSent) >= 0) {
                 newArrayRecipes.push(recipe);
             }
 
+            /*if(str.includes(lowSent)) {
+                newArrayRecipes.push(recipe);
+            }*/
+            
             for (let z = 0; z < lowSentALen; z++) {
                 const word = lowSentArray[z];
-                if (str.includes(word)){
-                    ++ count;
-                }
+
+                str.forEach(strWord => {
+                    if(strWord.includes(word)){
+                        count ++;//newArrayRecipes.push(recipe);
+                    }
+                })
+
+                /*if (str.includes(word)) {
+                    count ++;
+                }*/
             }
-                
+
             if (count === lowSentALen) {
                 newArrayRecipes.push(recipe);
                 count = 0;
@@ -94,30 +159,42 @@ function searchRecipes(){
         }
     }
 
-    function launchSearch(type = null, lowSent) {
+    function launchSearch(lowSent, type = null, precise = false) {
         let i = 0;
-        const recepiesLen = arrayRecipies.length;
+        let currentArray, recepiesLen;
+
+        if (precise && (preciseArrayRecipies instanceof Array && preciseArrayRecipies.length >= 1)) {
+            recepiesLen = preciseArrayRecipies.length;
+            currentArray = preciseArrayRecipies;
+        } else {    
+            recepiesLen = arrayRecipies.length;
+            currentArray = arrayRecipies;
+        }
         
         for (; i < recepiesLen; i++) {
-            const recipes = arrayRecipies[i];
+            const recipes = currentArray[i];
             
-            const title = recipes.childNodes[1].childNodes[0]
-            .childNodes[0].textContent.toLowerCase();
-            const ingredients = recipes.childNodes[1].childNodes[0]
-            .childNodes[1].childNodes[0].textContent.toLowerCase();
-            const desc = recipes.childNodes[1].childNodes[1]
-            .childNodes[1].textContent.toLowerCase();
-            const appliance = recipes.childNodes[2].childNodes[0]
-            .textContent.toLowerCase();
-            const ustensil = recipes.childNodes[2].childNodes[1].childNodes;
+            const title = recipes.children[1].children[0].children[0].textContent.toLowerCase();
+            const desc = recipes.children[1].children[1].children[1].textContent.toLowerCase();
+            const ingredients = recipes.children[1].children[0].children[1].childNodes;
+            const ingredientsLen = ingredients.length;
+            const appliance = recipes.children[2].children[0].textContent.toLowerCase();
+            const ustensil = recipes.children[2].children[1].childNodes;
             const ustensilALen = ustensil.length;
             
             const strArray = new Array();
             if(type === 'ingredient'){
-                console.log('ing '+ingredients)
-                searchIn(['', ingredients], recipes, lowSent);
+                let x = 0;
+                for (; x < ingredientsLen; x++) {
+                    const elem = ingredients[x];
+                    if(elem.localName === 'strong'){
+                        strArray.push(elem.textContent);
+                    }
+                }
+                searchIn(strArray, recipes, lowSent);
             } else if(type === 'appliance'){
-                searchIn(['', appliance], recipes, lowSent);
+                strArray.push(appliance);
+                searchIn(strArray, recipes, lowSent);
             } else if(type === 'ustensil'){
                 let z = 0;
                 for (; z < ustensilALen; z++) {
@@ -126,14 +203,15 @@ function searchRecipes(){
                 }
                 searchIn(strArray, recipes, lowSent);    
             }else{
-                strArray.push(title, ingredients, desc);
+                const ingrArray = ingredients;
+                strArray.push(title, ingrArray, desc);
                 searchIn(strArray, recipes, lowSent);
             }
         }
-        initUpdate();
+        initUpdate(precise);
     }
 
-    return {searchSentence, displayArray, divideAndConquer}
+    return {searchSentence, displayArray, divideAndConquer, getPreciseArray, removeSentence}
 }
 
 const search_input = document.querySelector('input.search_recipes');
