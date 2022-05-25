@@ -1,9 +1,10 @@
 const tagsContainer = document.querySelector('div.tags');
 function launchEvent(evt) {
-    const text = this.textContent;
-    const parent = this.parentElement.classList[0];
-    console.log(`span textContent => ${text} \n parent first className => ${parent}`);
-    searchForRecepies.searchSentence(text, parent);
+    const text = evt.textContent;
+    //console.log(`span textContent => ${text}`);
+    const parent = evt.parentElement.classList[0];
+    //console.log(`parent first className => ${parent}`);
+    searchForRecepies.searchSentence(text, parent, true);
     createTag(parent, text);
 }
 
@@ -32,6 +33,24 @@ function createTag(type, value) {
 }
 
 function tagRemove(evt) {
-    console.log(evt);
+    //console.log(evt);
+    const sentence = evt.parentElement.textContent;
+    //console.log(`textContent => ${sentence}`);
+    const type = evt.parentElement.classList[0].split('_')[1];
+    iiconsole.log(`type => ${type}`);
+    //searchForRecepies.removeSentence(sentence, type);
     evt.parentElement.parentElement.removeChild(evt.parentElement);
+    
+    if (tagsContainer.children.length >= 1) {
+        tagsContainer.childNodes.forEach((tag, i) => {
+            if(i > 0){
+                const typeTag = tag.classList[0].split('_')[1];
+                //console.log(`tag type => ${typeTag}`)
+                searchForRecepies.searchSentence(tag.textContent, typeTag);
+            }
+        })
+    }else{
+        pagination.newArray(arrayRecipies);
+        update();
+    }
 }
