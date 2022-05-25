@@ -35,6 +35,7 @@ function coloredBtn(){
             for (let i = 0; i < appALen; i++) {
                 const app = applianceA[i];
                 const appliance = document.createElement('span');
+                appliance.setAttribute('onclick', 'launchEvent(this)');
                 appliance.textContent = app;
                 ul.appendChild(appliance);
             }
@@ -51,6 +52,7 @@ function coloredBtn(){
             for (let i = 0; i < ingALen; i++) {
                 const ingredient = ingredientA[i];
                 const ingr = document.createElement('span');
+                ingr.setAttribute('onclick', 'launchEvent(this)');
                 ingr.textContent = ingredient;
                 ul.appendChild(ingr);
             }
@@ -66,6 +68,7 @@ function coloredBtn(){
             for (let i = 0; i < ustensilALen; i++) {
                 const ustensil = ustensilsA[i];
                 const ustensils = document.createElement('span');
+                ustensils.setAttribute('onclick', 'launchEvent(this)');
                 ustensils.textContent = ustensil;
                 ul.appendChild(ustensils);
             }
