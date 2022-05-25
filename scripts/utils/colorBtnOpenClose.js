@@ -71,7 +71,7 @@ btnsColoed.forEach(btn => {
             ulElem.classList.remove('colorbtn-anim-open');
         }
         
-        spanEvent();
+        //spanEvent();
     })
 
     spanElem2.addEventListener('click',function(){ 
