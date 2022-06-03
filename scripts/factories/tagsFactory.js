@@ -37,7 +37,7 @@ function tagRemove(evt) {
     const sentence = evt.parentElement.textContent;
     //console.log(`textContent => ${sentence}`);
     const type = evt.parentElement.classList[0].split('_')[1];
-    iiconsole.log(`type => ${type}`);
+    console.log(`type => ${type}`);
     //searchForRecepies.removeSentence(sentence, type);
     evt.parentElement.parentElement.removeChild(evt.parentElement);
     
