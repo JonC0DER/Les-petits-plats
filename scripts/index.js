@@ -26,6 +26,18 @@ function getRecipes() {
     return initRecipes(recipiesDatas);
 }
 
+function getDictWordPos(word) {
+    let i = 0;
+    const dictLen = dict.length;
+    for (; i < dictLen; i++) {
+        const elem = dict[i];
+        
+        if (elem['name'].match(word)) {
+            return elem;
+        }
+    }
+}
+
 function initRecipes(recipiesDatas) {
 
     const setRecipiesArray = async (recipie) => {
@@ -53,17 +65,53 @@ function initRecipes(recipiesDatas) {
         
         for (let z = 0; z < words.length; z++) {
             const word = words[z].replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'');
-            const matchArray = dict.filter(a => a['name'].match(word));
-            const baseSensitive = dict.filter(a => a['name'].localeCompare(word, 'fr', {sensitivity:'base'}));
+            const lastCharIndex = word.length - 1;
+            const dictLen = dict.length;
+            const matchArray = getDictWordPos(word);
+            //console.log(matchArray)
+            let compareWord = false;
+            let singulierPluriel = false;
+            let a = 0;
+            let dictElem = null;
+            
+            for (; a < dictLen; a++) {
+                if(dict[a]['name'].localeCompare(word, 'fr', {sensitivity:'base'}) === 0){
+                    compareWord = true;
+                    break;
+                }
+            }
 
-            if (dict.length > 0 && matchArray.length > 0 /*&& baseSensitive === 0*/) {
-                dict[dict.indexOf(matchArray[0])]['indexes'].push(recipeIndex);
+            dict.filter(dictWord => {
+                const lastChar = [word.slice(-1), dictWord['name'].slice(-1)];
+
+                if (lastChar.includes('s')) {
+                    const wordLen = word.length;
+                    const dLen = dictWord['name'].length;
+                    const dwordSing = dictWord['name'].slice(0, -1);
+                    const wordSing = word.slice(0, -1);
+                    
+                    if ((dLen === wordLen + 1 && dwordSing === word) 
+                    || (dLen + 1 === wordLen && dictWord['name'] === wordSing)){
+                        //console.log(`${dictWord['name']} ${wordSing} :: ${dwordSing} ${word}`)
+                        singulierPluriel = true;
+                        dictElem = dictWord;
+                    }
+                }
+            });
+            
+            if (singulierPluriel) {
+                //console.log(dictElem)
+                dict[dict.indexOf(dictElem)]['indexes'].push(recipeIndex);
+            }
+            else if (dictLen > 0 && compareWord){
+                //console.log(`${dict[a]['name']} ${word} ${dict.indexOf(dict[a])}`)
+                dict[dict.indexOf(dict[a])]['indexes'].push(recipeIndex);
             }
             else if (word.length > 2) {
                 const indexes = new Array();
 
-                indexes.push(recipeIndex);
-                dict.push({name: word, indexes: indexes});
+                indexes.push(recipeIndex);                 
+                dict.push({name: word, indexes: indexes});         
             }
         }        
     }
