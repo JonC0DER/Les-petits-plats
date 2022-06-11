@@ -16,32 +16,6 @@ function searchRecipes(){
         }
     }
 
-    function divideAndConquer(key, sentence) {
-        let start = 0;
-        let end = dict.length -1;
-
-        function begin(arrayToDivide, start, end, sentence){
-            const midIndex = Math.floor(arrayToDivide.length/2);
-            const wordsToDivide = arrayToDivide[midIndex][key].toLowerCase();
-            const wordsArrayToDivide = wordsToDivide.split(' ');
-            const ifInclude = wordsArrayToDivide.includes(sentence);
-            
-            const currentWordBoolean = sentence.localeCompare(
-                wordsArrayToDivide[index], 'fr', {sensitivity:'base', ignorePonctuation:true}
-            );
-            
-            if (currentWordBoolean === 0 || ifInclude) { return true; }
-            
-            if (currentWordBoolean < 0) { 
-                return begin(arrayToDivide, start, midIndex - 1, sentence);
-            }else{ 
-                return begin(arrayToDivide, midIndex + 1, end, sentence); 
-            }
-        }
-        
-        begin(recipiesDatas, start, end, sentence);
-    }
-
     function removeSentence(sentence, type) {
         const restructuringArray = getPreciseArray();
         const rALength = restructuringArray.length;
