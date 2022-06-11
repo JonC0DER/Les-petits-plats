@@ -16,30 +16,37 @@ function searchRecipes(){
         }
     }
 
-    function divideAndConquer(key, sentence) {
-        let start = 0;
-        let end = dict.length -1;
+    // fonction principal de recherche binaire (branche binarysearch)
+    function divideAndConquer(key, initSentence) {
+        let initStart = 0;
+        let initEnd = dict.length -1;
+        resetArray();
 
         function begin(arrayToDivide, start, end, sentence){
-            const midIndex = Math.floor(arrayToDivide.length/2);
-            const wordsToDivide = arrayToDivide[midIndex][key].toLowerCase();
-            const wordsArrayToDivide = wordsToDivide.split(' ');
-            const ifInclude = wordsArrayToDivide.includes(sentence);
+            if(start > end) return false;
+            //const transformArray = arrayToDivide.slice(start, end);
+            const transformArray = arrayToDivide;
+            const midIndex = Math.floor((start + end)/2);
+            const wordSelected = transformArray[midIndex][key];
             
-            const currentWordBoolean = sentence.localeCompare(
-                wordsArrayToDivide[index], 'fr', {sensitivity:'base', ignorePonctuation:true}
-            );
+            const currentWordPos = sentence.localeCompare( wordSelected, 'fr', {sensitivity:'base'});
+            console.log(`${sentence} ${wordSelected}`)
             
-            if (currentWordBoolean === 0 || ifInclude) { return true; }
-            
-            if (currentWordBoolean < 0) { 
-                return begin(arrayToDivide, start, midIndex - 1, sentence);
+            if (currentWordPos === 0) { 
+                transformArray[midIndex]['indexes'].forEach(index => {
+                    newArrayRecipes.push(arrayRecipies[index]);
+                })
+                initUpdate();
+                return true; 
+            }
+            else if (currentWordPos < 0) { 
+                return begin(transformArray, start, midIndex - 1, sentence);
             }else{ 
-                return begin(arrayToDivide, midIndex + 1, end, sentence); 
+                return begin(transformArray, midIndex + 1, end, sentence); 
             }
         }
         
-        begin(recipiesDatas, start, end, sentence);
+        console.log(begin(dict, initStart, initEnd, initSentence));
     }
 
     function removeSentence(sentence, type) {
@@ -218,7 +225,8 @@ const search_input = document.querySelector('input.search_recipes');
 const searchForRecepies = searchRecipes();
 search_input.addEventListener('input', function (evt) {
     if (this.value.length > 2) {   
-        searchForRecepies.searchSentence(this.value);
+        //searchForRecepies.searchSentence(this.value);
+        searchForRecepies.divideAndConquer('name', this.value);
     }
     else if(this.value.length < 3){
         pagination.newArray(arrayRecipies);
@@ -228,7 +236,8 @@ search_input.addEventListener('input', function (evt) {
 
 const search_btn = document.querySelector('div.search');
 search_btn.addEventListener('click', function(){
-    searchForRecepies.searchSentence(search_input.value);
+    //searchForRecepies.searchSentence(search_input.value);
+    searchForRecepies.divideAndConquer('name',search_input.value);
 });
 
 const tags = document.querySelector('div.tags');
