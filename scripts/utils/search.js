@@ -17,20 +17,21 @@ function searchRecipes(){
     }
 
     // fonction principal de recherche binaire (branche binarysearch)
-    function divideAndConquer(key, initSentence) {
+    function divideAndConquer(key, initSentence, dictionnary) {
         let initStart = 0;
         let initEnd = dict.length -1;
         resetArray();
-
+        
         function begin(arrayToDivide, start, end, sentence){
             if(start > end) return false;
             //const transformArray = arrayToDivide.slice(start, end);
             const transformArray = arrayToDivide;
             const midIndex = Math.floor((start + end)/2);
             const wordSelected = transformArray[midIndex][key];
+            console.log(wordSelected)
             
             const currentWordPos = sentence.localeCompare( wordSelected, 'fr', {sensitivity:'base'});
-            console.log(`${sentence} ${wordSelected}`)
+            //console.log(`${sentence} ${wordSelected}`)
             
             if (currentWordPos === 0) { 
                 transformArray[midIndex]['indexes'].forEach(index => {
@@ -46,7 +47,7 @@ function searchRecipes(){
             }
         }
         
-        console.log(begin(dict, initStart, initEnd, initSentence));
+        console.log(begin(dictionnary, initStart, initEnd, initSentence));
     }
 
     function removeSentence(sentence, type) {
@@ -94,10 +95,20 @@ function searchRecipes(){
         initUpdate(true);
     }
 
+    function searchInLib(input, lib){
+        for (const key in lib) {
+            if (lib.hasOwnProperty(input)) {
+                return lib[input];
+            }
+        }
+    }
+    
     function searchSentence(sentence, type = null, precise = false) {
         resetArray();
+        const lib = {name: dict, ingredient: ingredientDict, appliance: applianceDict, ustensil: ustensilDict};    
         const lowSent = sentence.trim().toLowerCase();
-        launchSearch(lowSent, type, precise);
+        const libItem = searchInLib(type, lib);
+        divideAndConquer(type, lowSent, libItem);
     }
 
     function initUpdate(precise = false) {
@@ -112,7 +123,7 @@ function searchRecipes(){
             }
             pagination.newArray(uniqArrayRecipes);
             const btns = coloredBtn();
-            btns.setValuesInArray();
+            btns.reloadAll();
         }
         update();
     }
@@ -124,8 +135,8 @@ const search_input = document.querySelector('input.search_recipes');
 const searchForRecepies = searchRecipes();
 search_input.addEventListener('input', function (evt) {
     if (this.value.length > 2) {   
-        //searchForRecepies.searchSentence(this.value);
-        searchForRecepies.divideAndConquer('name', this.value);
+        //searchForRecepies.divideAndConquer('name', this.value);
+        searchForRecepies.searchSentence(this.value, 'name');
     }
     else if(this.value.length < 3){
         pagination.newArray(arrayRecipies);
@@ -135,8 +146,8 @@ search_input.addEventListener('input', function (evt) {
 
 const search_btn = document.querySelector('div.search');
 search_btn.addEventListener('click', function(){
-    //searchForRecepies.searchSentence(search_input.value);
-    searchForRecepies.divideAndConquer('name',search_input.value);
+    //searchForRecepies.divideAndConquer('name',search_input.value);
+    searchForRecepies.searchSentence(search_input.value, 'name');
 });
 
 const tags = document.querySelector('div.tags');
