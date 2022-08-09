@@ -1,3 +1,4 @@
+// new factorie by joncoder
 const content = document.querySelector('main.gallerie_recipies');
 const infoPage = document.querySelector('.page_info');
 const arrayRecipies = new Array();
