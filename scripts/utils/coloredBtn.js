@@ -26,52 +26,49 @@ function coloredBtn(){
         }
     }
 
-    function displayAppliance(applianceA) {
+    function reloadAll() {
+        displayAppliance();
+        displayIngredient();
+        displayUstensils();
+    }
+
+    function displayAppliance() {
         const ul = document.querySelector('ul.appliance');
         removeChildren(ul);
-        if (applianceA) {
-            const appALen = applianceA.length;
-
-            for (let i = 0; i < appALen; i++) {
-                const app = applianceA[i];
-                const appliance = document.createElement('span');
-                appliance.setAttribute('onclick', 'launchEvent(this)');
-                appliance.textContent = app;
-                ul.appendChild(appliance);
-            }
-            
+        const appALen = applianceDict.length;
+        for (let i = 0; i < appALen; i++) {
+            const app = applianceDict[i].appliance;
+            const appliance = document.createElement('span');
+            appliance.setAttribute('onclick', 'launchEvent(this)');
+            appliance.textContent = app;
+            ul.appendChild(appliance);
         }
     }
 
-    function displayIngredient(ingredientA) {
+    function displayIngredient() {
         const ul = document.querySelector('ul.ingredient');
         removeChildren(ul);
-        if (ingredientA) {
-            const ingALen = ingredientA.length;
+        const ingALen = ingredientDict.length;
 
-            for (let i = 0; i < ingALen; i++) {
-                const ingredient = ingredientA[i];
-                const ingr = document.createElement('span');
-                ingr.setAttribute('onclick', 'launchEvent(this)');
-                ingr.textContent = ingredient;
-                ul.appendChild(ingr);
-            }
+        for (let i = 0; i < ingALen; i++) {
+            const ingredient = ingredientDict[i].ingredient;
+            const ingr = document.createElement('span');
+            ingr.setAttribute('onclick', 'launchEvent(this)');
+            ingr.textContent = ingredient;
+            ul.appendChild(ingr);
         }
     }
 
-    function displayUstensils(ustensilsA) {
+    function displayUstensils() {
         const ul = document.querySelector('ul.ustensil');
         removeChildren(ul);
-        if (ustensilsA) {
-            const ustensilALen = ustensilsA.length;
-
-            for (let i = 0; i < ustensilALen; i++) {
-                const ustensil = ustensilsA[i];
-                const ustensils = document.createElement('span');
-                ustensils.setAttribute('onclick', 'launchEvent(this)');
-                ustensils.textContent = ustensil;
-                ul.appendChild(ustensils);
-            }
+        const ustensilALen = ustensilDict.length;
+        for (let i = 0; i < ustensilALen; i++) {
+            const ustensil = ustensilDict[i].ustensil;
+            const ustensils = document.createElement('span');
+            ustensils.setAttribute('onclick', 'launchEvent(this)');
+            ustensils.textContent = ustensil;
+            ul.appendChild(ustensils);
         }
     }
 
@@ -108,55 +105,6 @@ function coloredBtn(){
             if(type === 'ustensil'){ displayUstensils(uniqSpanArray); }
         }
     }
-    
-    function setValuesInArray(contentArray = null) {
-        if (!contentArray) {
-            contentArray = content.childNodes;
-        }
 
-        if(applianceArray.length > 0){ applianceArray.splice(0, applianceArray.length) }
-        if(ustensilsArray.length > 0){ ustensilsArray.splice(0, ustensilsArray.length) }
-        if(ingredientArray.length > 0){ ingredientArray.splice(0, ingredientArray.length) }
-
-        const contentALen = contentArray.length;
-
-        for (let i = 0; i < contentALen; i++) {
-            const article = contentArray[i];
-
-            if (article.children[2]) {
-                applianceArray.push(article.children[2].children[0].textContent);
-
-                const ustensilA = article.children[2].children[1].childNodes;
-                const ustensilALen = ustensilA.length;
-
-                for (let z = 0; z < ustensilALen; z++) {
-                    const ustensil = ustensilA[z];
-                    ustensilsArray.push(ustensil.textContent);
-                }
-            }
-
-            if (article.children[1]) {
-                const ingredientsA = article.children[1].children[0].children[1].childNodes;
-                const ingsALen = ingredientsA.length;
-
-                for (let b = 0; b < ingsALen; b++) {
-                    const ing = ingredientsA[b];
-                    
-                    if (ing.localName === 'strong') {
-                        ingredientArray.push(ing.textContent);
-                    }
-                }
-            }
-        }
-
-        const uniqIngA = checkInArray(ingredientArray);
-        const uniqAppA = checkInArray(applianceArray);
-        const uniqUstA = checkInArray(ustensilsArray);
-
-        displayIngredient( uniqIngA );
-        displayAppliance( uniqAppA );
-        displayUstensils( uniqUstA );
-    }
-
-    return {setValuesInArray, searchInBtns, getAppliances, getIngredients, getUstensils}
+    return {reloadAll, searchInBtns, getAppliances, getIngredients, getUstensils}
 }
