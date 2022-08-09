@@ -2,10 +2,9 @@ const content = document.querySelector('main.gallerie_recipies');
 const infoPage = document.querySelector('.page_info');
 const arrayRecipies = new Array();
 const btns = coloredBtn();
-let recipiesDatas; 
-let preciseArrayRecipies;
-let dict = new Array();
-let applianceDict = new Array();
+let recipiesDatas, preciseArrayRecipies;
+let dict = new Array(), applianceDict = new Array(), ustensilDict = new Array(),
+ ingredientDict = new Array();
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -49,20 +48,79 @@ function initRecipes(recipiesDatas) {
     }
 
     for (let i = 0; i < recipiesDatas.length; i++) {
+        // index des recettes dans le tableau recipiesDatas
         const recipeIndex = recipiesDatas.indexOf(recipiesDatas[i]);
+        //tableau de mots comosant le titre de la recette
+        const words = recipiesDatas[i]['name'].toLowerCase().split(' ');
+        
+        // ingredient
+        const arrayIngredient = recipiesDatas[i].ingredients;
+        const arIngrLen = arrayIngredient.length;
+
+        for (let indexIngrObj = 0; indexIngrObj < arIngrLen; indexIngrObj++) {
+            const nameIngr = arrayIngredient[indexIngrObj]['ingredient'];
+            const matchIngr = ingredientDict.filter(a => a['ingredient'].match(nameIngr));
+
+            if (ingredientDict.length > 0 && matchIngr.length > 0) {
+                ingredientDict[ingredientDict.indexOf(matchIngr[0])]['indexes'].push(recipeIndex);
+            }else{
+                const indexes = new Array();
+
+                indexes.push(recipeIndex);
+                ingredientDict.push({ingredient: nameIngr, indexes: indexes});
+            }
+        }
+
+        // appliances
+        //noms des appareil + filtre de charactères spéciaux
         const nameAppliance = recipiesDatas[i].appliance.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'');
         const matchAppliance = applianceDict.filter(a => a['appliance'].match(nameAppliance));
-        const words = recipiesDatas[i]['name'].toLowerCase().split(' ');
-
+        
         if (applianceDict.length > 0 && matchAppliance.length > 0) {
             applianceDict[applianceDict.indexOf(matchAppliance[0])]['indexes'].push(recipeIndex);
         }else{
             const indexes = new Array();
-
+            
             indexes.push(recipeIndex);
             applianceDict.push({appliance: nameAppliance, indexes: indexes});
         }
         
+        //ustensils
+        const arrayUstensil = recipiesDatas[i].ustensils;
+        const arUstLen = arrayUstensil.length;
+
+        for (let ustIndex = 0; ustIndex < arUstLen; ustIndex++) {
+            const nameUstensil = arrayUstensil[ustIndex];
+            const matchUstensil = ustensilDict.filter(a => a['ustensil'].match(nameUstensil));
+
+            let uDictIndex = 0;
+            let compareUstensil = false;
+            const uDLen = ustensilDict.length;
+
+            for (; uDictIndex < uDLen; uDictIndex++) {
+                const uElem = ustensilDict[uDictIndex];
+                
+                if(uElem['ustensil'].localeCompare(nameUstensil, 'fr', {sensitivity:'base'}) === 0){
+                    compareUstensil = true;
+                    break;
+                }
+            }
+
+            if (compareUstensil || (ustensilDict.length > 0 && matchUstensil.length > 0)) {
+                const ustensilIndex = ustensilDict.indexOf(ustensilDict[uDictIndex]);
+                if(ustensilIndex > -1){
+                    ustensilDict[ustensilDict.indexOf(ustensilDict[uDictIndex])]['indexes'].push(recipeIndex);
+                }
+            }else{
+                const indexes = new Array();
+
+                indexes.push(recipeIndex);
+                ustensilDict.push({ustensil: nameUstensil, indexes: indexes});
+            }
+        }
+        ustensilDict = [...new Set(ustensilDict)];
+
+        // titre de recette
         for (let z = 0; z < words.length; z++) {
             const word = words[z].replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'');
             const lastCharIndex = word.length - 1;
@@ -116,11 +174,26 @@ function initRecipes(recipiesDatas) {
         }        
     }
 
-    dict.sort((a,b) => a['name'].localeCompare(
+    dict.sort((a, b) => a['name'].localeCompare(
         b['name'], 'fr', 
         {sensitivity:'base', ignorePonctuation:true}
+    )); 
+        
+    ingredientDict.sort((a, b) => a['ingredient'].localeCompare(
+        b['ingredient'], 'fr',
+        {sensitivity:'base', ignorePonctuation:true}
     ))
+
+    applianceDict.sort((a, b) => a['appliance'].localeCompare(
+        b['appliance'], 'fr', 
+        {sensitivity:'base', ignorePonctuation:true}
+    )) 
     
+    ustensilDict.sort((a, b) => a['ustensil'].localeCompare(
+        b['ustensil'], 'fr', 
+        {sensitivity:'base', ignorePonctuation:true}
+    ))
+
     const recipiesDatasLen = recipiesDatas.length;
 
     for (let i = 0; i < recipiesDatasLen; i++) {
@@ -134,7 +207,7 @@ function initRecipes(recipiesDatas) {
 loadedRecipes = false;
 setTimeout(function() {
     getRecipes();
-    btns.setValuesInArray(arrayRecipies);
+    btns.reloadAll();
     //console.log('first')
     update()
 },1000)
