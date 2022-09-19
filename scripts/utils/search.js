@@ -19,35 +19,51 @@ function searchRecipes(){
     // fonction principal de recherche binaire (branche binarysearch)
     function divideAndConquer(key, initSentence, dictionnary) {
         let initStart = 0;
-        let initEnd = dict.length -1;
+        let initEnd = dictionnary.length -1;
         resetArray();
         
-        function begin(arrayToDivide, start, end, sentence){
+        function begin(arrayToDivide, start, end, sentences){
             if(start > end) return false;
-            //const transformArray = arrayToDivide.slice(start, end);
+            // const transformArray = arrayToDivide.slice(start, end);
             const transformArray = arrayToDivide;
             const midIndex = Math.floor((start + end)/2);
+            console.log('begin inset => ', arrayToDivide)
+            console.log('sentences => ', sentences)
+            console.log('midIndex => ', midIndex)
+            console.log('start => ', start, 'end', end)
+
+            console.log('=> ', transformArray[midIndex])
+
             const wordSelected = transformArray[midIndex][key];
-            console.log(wordSelected)
-            
-            const currentWordPos = sentence.localeCompare( wordSelected, 'fr', {sensitivity:'base'});
-            //console.log(`${sentence} ${wordSelected}`)
-            
-            if (currentWordPos === 0) { 
-                transformArray[midIndex]['indexes'].forEach(index => {
-                    newArrayRecipes.push(arrayRecipies[index]);
+            let currentWordPos;
+            const sentencesLen = sentences.length;
+            for (let sentI = 0; sentI < sentencesLen; sentI++) {
+                const sentence = sentences[sentI];
+                currentWordPos = sentence.localeCompare( wordSelected, 'fr', {sensitivity:'base'});
+                if (currentWordPos === 0) { 
+                    transformArray[midIndex]['indexes'].forEach(index => {
+                        newArrayRecipes.push(arrayRecipies[index]);
+                    })
+                }
+                newArrayRecipes.forEach(elem => {
+                    const stringArray = elem.children[1].children[0].children[0].textContent.toLowerCase().split(' ');
+                    if (!stringArray.includes(sentence)) {
+                        newArrayRecipes.splice(newArrayRecipes.indexOf(elem), 1);
+                    }
                 })
-                initUpdate();
-                return true; 
             }
-            else if (currentWordPos < 0) { 
-                return begin(transformArray, start, midIndex - 1, sentence);
+            console.log(newArrayRecipes);
+            // console.log(`${sentence} ${wordSelected}`)
+            initUpdate();
+            
+            if (currentWordPos < 0) { 
+                return begin(transformArray, start, midIndex - 1, sentences);
             }else{ 
-                return begin(transformArray, midIndex + 1, end, sentence); 
+                return begin(transformArray, midIndex + 1, end, sentences); 
             }
         }
         
-        console.log(begin(dictionnary, initStart, initEnd, initSentence));
+        begin(dictionnary, initStart, initEnd, initSentence);
     }
 
     function removeSentence(sentence, type) {
@@ -106,7 +122,7 @@ function searchRecipes(){
     function searchSentence(sentence, type = null, precise = false) {
         resetArray();
         const lib = {name: dict, ingredient: ingredientDict, appliance: applianceDict, ustensil: ustensilDict};    
-        const lowSent = sentence.trim().toLowerCase();
+        const lowSent = sentence.trim().toLowerCase().split(' ');
         const libItem = searchInLib(type, lib);
         divideAndConquer(type, lowSent, libItem);
     }
@@ -160,8 +176,8 @@ for(let i = 0; i < specInputLen; ++i){
         if (input.value.length > 2) {
             btns.searchInBtns(input.value, input.className);
         }
-        else if(input.value.length < 3){
+        /*else if(input.value.length < 3){
             btns.setValuesInArray(arrayRecipies);
-        }
+        }*/
     })
 }
