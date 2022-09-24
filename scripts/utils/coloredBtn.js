@@ -26,6 +26,13 @@ function coloredBtn(){
         }
     }
 
+    function reloadAll() {
+        setValuesInArray(arrayRecipies)
+        /*displayAppliance(setIt);
+        displayIngredient(setIt);
+        displayUstensils(setIt);*/
+    }
+
     function displayAppliance(applianceA) {
         const ul = document.querySelector('ul.appliance');
         removeChildren(ul);
@@ -158,5 +165,5 @@ function coloredBtn(){
         displayUstensils( uniqUstA );
     }
 
-    return {setValuesInArray, searchInBtns, getAppliances, getIngredients, getUstensils}
+    return {reloadAll, setValuesInArray, searchInBtns, getAppliances, getIngredients, getUstensils}
 }
