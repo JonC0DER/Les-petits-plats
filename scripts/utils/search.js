@@ -185,7 +185,7 @@ function searchRecipes(){
         initUpdate(precise);
     }
 
-    return {searchSentence, displayArray, divideAndConquer, getPreciseArray, removeSentence}
+    return {searchSentence, displayArray, getPreciseArray, removeSentence}
 }
 
 const search_input = document.querySelector('input.search_recipes');
