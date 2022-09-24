@@ -27,48 +27,21 @@ function coloredBtn(){
     }
 
     function reloadAll() {
-        displayAppliance();
-        displayIngredient();
-        displayUstensils();
+        displayBtns(ingredientDict, 'ul.ingredient', 'ingredient');
+        displayBtns(applianceDict, 'ul.appliance', 'appliance');
+        displayBtns(ustensilDict, 'ul.ustensil', 'ustensil');
     }
 
-    function displayAppliance() {
-        const ul = document.querySelector('ul.appliance');
+    function displayBtns(dictionnary, selector, key, simple = false){
+        const ul = document.querySelector(selector);
         removeChildren(ul);
-        const appALen = applianceDict.length;
-        for (let i = 0; i < appALen; i++) {
-            const app = applianceDict[i].appliance;
-            const appliance = document.createElement('span');
-            appliance.setAttribute('onclick', 'launchEvent(this)');
-            appliance.textContent = app;
-            ul.appendChild(appliance);
-        }
-    }
-
-    function displayIngredient() {
-        const ul = document.querySelector('ul.ingredient');
-        removeChildren(ul);
-        const ingALen = ingredientDict.length;
-
-        for (let i = 0; i < ingALen; i++) {
-            const ingredient = ingredientDict[i].ingredient;
-            const ingr = document.createElement('span');
-            ingr.setAttribute('onclick', 'launchEvent(this)');
-            ingr.textContent = ingredient;
-            ul.appendChild(ingr);
-        }
-    }
-
-    function displayUstensils() {
-        const ul = document.querySelector('ul.ustensil');
-        removeChildren(ul);
-        const ustensilALen = ustensilDict.length;
-        for (let i = 0; i < ustensilALen; i++) {
-            const ustensil = ustensilDict[i].ustensil;
-            const ustensils = document.createElement('span');
-            ustensils.setAttribute('onclick', 'launchEvent(this)');
-            ustensils.textContent = ustensil;
-            ul.appendChild(ustensils);
+        const elemALen = dictionnary.length;
+        for (let i = 0; i < elemALen; i++) {
+            const elem = simple == true ? dictionnary[i] : dictionnary[i][key];
+            const spanElem = document.createElement('span');
+            spanElem.setAttribute('onclick', 'launchEvent(this)');
+            spanElem.textContent = elem;
+            ul.appendChild(spanElem);
         }
     }
 
@@ -80,7 +53,6 @@ function coloredBtn(){
         const ulA = ul.childNodes;
         const ulALen = ulA.length;
 
-
         for (let i = 0; i < ulALen; i++) {
             const span = ulA[i];
             const lowSpan = span.textContent.toLowerCase();
@@ -90,7 +62,6 @@ function coloredBtn(){
                 if (lowSpan.split(' ').includes(word)) {
                     newSpanArray.push(span.textContent);
                 }
-                
             }
             
             if ( lowSpan.search( sentence.toLowerCase() ) >= 0 ) {
@@ -100,9 +71,9 @@ function coloredBtn(){
 
         const uniqSpanArray = uniqValue(newSpanArray);
         if (uniqSpanArray.length > 0) {
-            if(type === 'ingredient'){ displayIngredient(uniqSpanArray); }
-            if(type === 'appliance'){ displayAppliance(uniqSpanArray); }
-            if(type === 'ustensil'){ displayUstensils(uniqSpanArray); }
+            if(type === 'ingredient'){ displayBtns(uniqSpanArray, 'ul.ingredient', 'ingredient', true); }
+            if(type === 'appliance'){ displayBtns(uniqSpanArray, 'ul.appliance', 'appliance', true); }
+            if(type === 'ustensil'){ displayBtns(uniqSpanArray, 'ul.ustensil', 'ustensil', true); }
         }
     }
 
