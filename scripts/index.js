@@ -25,19 +25,25 @@ function getRecipes() {
     return initRecipes(recipiesDatas);
 }
 
-function getDictWordPos(word) {
+function getDictWordPos(word, dictionnary, key) {
     let i = 0;
-    const dictLen = dict.length;
+    const dictLen = dictionnary.length;
     for (; i < dictLen; i++) {
-        const elem = dict[i];
+        const elem = dictionnary[i];
         
-        if (elem['name'].match(word)) {
+        if (elem[key].match(word)) {
             return elem;
         }
     }
 }
 
-function singulierPlurielFilter(dictionnary, recipieWordInSentence, dictionnaryIndex, recipeIndexSet, boolCompare){
+function singulierPlurielFilter(paramsArray){
+    const dictionnary = paramsArray[0];
+    const recipieWordInSentence = paramsArray[1]; 
+    const dictionnaryIndex = paramsArray[2]; 
+    const recipeIndexSet = paramsArray[3];
+    const boolCompare = paramsArray[4];
+
     const dictionnaryLen = dictionnary.length;
     let singulierPluriel = false;
     let dictElem = null;
@@ -101,8 +107,18 @@ function initRecipes(recipiesDatas) {
         for (let indexIngrObj = 0; indexIngrObj < arIngrLen; indexIngrObj++) {
             const nameIngr = arrayIngredient[indexIngrObj]['ingredient'];
             const matchIngr = ingredientDict.filter(a => a['ingredient'].match(nameIngr));
+            //const matchIngr = getDictWordPos(nameIngr, arrayIngredient, 'ingredient');
+            let compareIngr = false;
+            
+            for(newIIngrObj = 0; newIIngrObj < arIngrLen; newIIngrObj++){
+                const ingr = arrayIngredient[newIIngrObj]['ingredient'];
+                if(ingr.localeCompare(nameIngr, 'fr', {sensitivity: 'base', ignorePonctuation: true}) === 0){
+                    compareIngr = true;
+                    break;
+                } 
+            }
 
-            if (ingredientDict.length > 0 && matchIngr.length > 0) {
+            if (compareIngr && (ingredientDict.length > 0 && matchIngr.length > 0)) {
                 ingredientDict[ingredientDict.indexOf(matchIngr[0])]['indexes'].push(recipeIndex);
             }else{
                 const indexes = new Array();
@@ -165,14 +181,9 @@ function initRecipes(recipiesDatas) {
         // dict
         for (let z = 0; z < words.length; z++) {
             const word = words[z].replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'');
-            const lastCharIndex = word.length - 1;
             const dictLen = dict.length;
-            const matchArray = getDictWordPos(word);
             let a = 0;
-            //console.log(matchArray)
             let compareWord = false;
-            /*let singulierPluriel = false;
-            let dictElem = null;*/
             
             for (; a < dictLen; a++) {
                 if(dict[a]['name'].localeCompare(word, 'fr', {sensitivity:'base'}) === 0){
@@ -181,70 +192,22 @@ function initRecipes(recipiesDatas) {
                 }
             }
 
-            singulierPlurielFilter(dict, word, a, recipeIndex, compareWord);            
-
-            /*dict.filter(dictWord => {
-                const lastChar = [word.slice(-1), dictWord['name'].slice(-1)];
-
-                if (lastChar.includes('s')) {
-                    const wordLen = word.length;
-                    const dLen = dictWord['name'].length;
-                    const dwordSing = dictWord['name'].slice(0, -1);
-                    const wordSing = word.slice(0, -1);
-                    
-                    if ((dLen === wordLen + 1 && dwordSing === word) 
-                    || (dLen + 1 === wordLen && dictWord['name'] === wordSing)){
-                        //console.log(`${dictWord['name']} ${wordSing} :: ${dwordSing} ${word}`)
-                        singulierPluriel = true;
-                        dictElem = dictWord;
-                    }
-                }
-            });*/
-            
-            /*if (singulierPluriel) {
-                //console.log(dictElem)
-                dict[dict.indexOf(dictElem)]['indexes'].push(recipeIndex);
-            }
-            else if (dictLen > 0 && compareWord){
-                //console.log(`${dict[a]['name']} ${word} ${dict.indexOf(dict[a])}`)
-                dict[dict.indexOf(dict[a])]['indexes'].push(recipeIndex);
-            }
-            else if (word.length > 2) {
-                const indexes = new Array();
-
-                indexes.push(recipeIndex);                 
-                dict.push({name: word, indexes: indexes});         
-            }*/
+            singulierPlurielFilter([dict, word, a, recipeIndex, compareWord]);            
         }        
     }
-        
-    dict = [...new Set(
-        dict.sort((a, b) => a['name'].localeCompare(
-            b['name'], 'fr', 
-            {sensitivity:'base', ignorePonctuation:true}
-        )) 
-    )];
-            
-    ingredientDict = [...new Set(
-        ingredientDict.sort((a, b) => a['ingredient'].localeCompare(
-            b['ingredient'], 'fr',
-            {sensitivity:'base', ignorePonctuation:true}
+    
+    function sortClean(dictionnary, key) {
+        dictionnary = [... new Set(dictionnary)];
+        dictionnary.sort((a, b) => a[key].localeCompare(
+            b[key], 'fr', {sensitivity: 'base', ignorePonctuation: true}
         ))
-    )];
-            
-    applianceDict = [...new Set(
-        applianceDict.sort((a, b) => a['appliance'].localeCompare(
-            b['appliance'], 'fr', 
-            {sensitivity:'base', ignorePonctuation:true}
-        )) 
-    )];
-        
-    ustensilDict = [...new Set(
-        ustensilDict.sort((a, b) => a['ustensil'].localeCompare(
-            b['ustensil'], 'fr', 
-            {sensitivity:'base', ignorePonctuation:true}
-        ))
-    )];
+        return dictionnary;
+    }
+
+    dict = sortClean(dict, 'name');
+    ingredientDict = sortClean(ingredientDict, 'ingredient');         
+    applianceDict = sortClean(applianceDict, 'appliance');
+    ustensilDict = sortClean(ustensilDict, 'ustensil');
 
     const recipiesDatasLen = recipiesDatas.length;
 
