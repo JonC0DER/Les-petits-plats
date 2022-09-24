@@ -216,7 +216,8 @@ for(let i = 0; i < specInputLen; ++i){
             btns.searchInBtns(input.value, input.className);
         }
         else if(input.value.length < 3){
-            btns.setValuesInArray(arrayRecipies);
+            //btns.setValuesInArray(arrayRecipies);
+            btns.reloadAll();
         }
     })
 }
