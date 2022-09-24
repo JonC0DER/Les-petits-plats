@@ -10,7 +10,7 @@ function coloredBtn(){
     function getUstensils() { return (ustensilsArray); }
 
     function uniqValue(setArray){
-        return newArray = [...new Set(setArray)];
+        return [...new Set(setArray)];
     }
 
     function checkInArray(array) {
@@ -33,6 +33,7 @@ function coloredBtn(){
     }
 
     function displayBtns(dictionnary, selector, key, simple = false){
+        dictionnary = uniqValue(dictionnary);
         const ul = document.querySelector(selector);
         removeChildren(ul);
         const elemALen = dictionnary.length;

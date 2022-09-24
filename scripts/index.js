@@ -105,17 +105,43 @@ function initRecipes(recipiesDatas) {
         const arIngrLen = arrayIngredient.length;
 
         for (let indexIngrObj = 0; indexIngrObj < arIngrLen; indexIngrObj++) {
-            const nameIngr = arrayIngredient[indexIngrObj]['ingredient'];
+            const nameIngr = arrayIngredient[indexIngrObj]['ingredient'].toLowerCase();
+            const nameIngrA = nameIngr.split(' ');
             const matchIngr = ingredientDict.filter(a => a['ingredient'].match(nameIngr));
             //const matchIngr = getDictWordPos(nameIngr, arrayIngredient, 'ingredient');
             let compareIngr = false;
             
             for(newIIngrObj = 0; newIIngrObj < arIngrLen; newIIngrObj++){
-                const ingr = arrayIngredient[newIIngrObj]['ingredient'];
+                const ingr = arrayIngredient[newIIngrObj]['ingredient'].toLowerCase();
+                const ingrA = ingr.split(' ');
                 if(ingr.localeCompare(nameIngr, 'fr', {sensitivity: 'base', ignorePonctuation: true}) === 0){
                     compareIngr = true;
                     break;
                 } 
+                /*ingrA.forEach(ingrWord => {
+                    if (nameIngrA.includes(ingrWord)) {
+                        //newSpanArray.push(span.textContent);
+                        if (compareIngr && (ingredientDict.length > 0 && matchIngr.length > 0)) {
+                            ingredientDict[ingredientDict.indexOf(matchIngr[0])]['indexes'].push(recipeIndex);
+                        }else{
+                            const indexes = new Array();
+                            
+                            indexes.push(recipeIndex);
+                            ingredientDict.push({ingredient: nameIngr, indexes: indexes});
+                        }
+                    }
+                });*/
+                
+                /*if ( nameIngr.search( ingr.toLowerCase() ) >= 0 ) {
+                        if (compareIngr && (ingredientDict.length > 0 && matchIngr.length > 0)) {
+                            ingredientDict[ingredientDict.indexOf(matchIngr[0])]['indexes'].push(recipeIndex);
+                        }else{
+                            const indexes = new Array();
+                            
+                            indexes.push(recipeIndex);
+                            ingredientDict.push({ingredient: nameIngr, indexes: indexes});
+                        }
+                }*/
             }
 
             if (compareIngr && (ingredientDict.length > 0 && matchIngr.length > 0)) {
@@ -127,7 +153,6 @@ function initRecipes(recipiesDatas) {
                 ingredientDict.push({ingredient: nameIngr, indexes: indexes});
             }
         }
-
         // appliances
         //noms des appareil + filtre de charactères spéciaux
         const nameAppliance = recipiesDatas[i].appliance.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'');

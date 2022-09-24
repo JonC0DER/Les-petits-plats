@@ -27,12 +27,6 @@ function searchRecipes(){
             // const transformArray = arrayToDivide.slice(start, end);
             const transformArray = arrayToDivide;
             const midIndex = Math.floor((start + end)/2);
-            console.log('sentences => ', sentences)
-            console.log('midIndex => ', midIndex)
-            console.log('start => ', start, 'end', end)
-
-            console.log('=> ', transformArray[midIndex])
-
             const wordSelected = transformArray[midIndex][key];
             let currentWordPos;
             const sentencesLen = sentences.length;
