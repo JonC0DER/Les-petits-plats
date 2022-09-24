@@ -27,7 +27,6 @@ function searchRecipes(){
             // const transformArray = arrayToDivide.slice(start, end);
             const transformArray = arrayToDivide;
             const midIndex = Math.floor((start + end)/2);
-            console.log('begin inset => ', arrayToDivide)
             console.log('sentences => ', sentences)
             console.log('midIndex => ', midIndex)
             console.log('start => ', start, 'end', end)
@@ -172,12 +171,14 @@ const specInputLen = specificInput.length;
 
 for(let i = 0; i < specInputLen; ++i){
     const input = specificInput[i];
-    input.addEventListener('input', () => {
-        if (input.value.length > 2) {
-            btns.searchInBtns(input.value, input.className);
+    input.addEventListener('input', function (evt) {
+        if (this.value.length >= 3) {
+            btns.searchInBtns(this.value, this.className);
         }
-        /*else if(input.value.length < 3){
-            btns.setValuesInArray(arrayRecipies);
-        }*/
+        else if(this.value.length < 3){
+            btns.reloadAll();
+            pagination.newArray(arrayRecipies);
+            update();
+        }
     })
 }
